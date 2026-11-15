@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Atmospheric CO2 and global temperature from NOAA and NASA, updated every week." />
+    <title>CO₂ and Global Temperature</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="wrap">
+      <p class="eyebrow">Climate data dashboard</p>
+      <h1>CO₂ and global temperature</h1>
+      <p class="lead">Carbon dioxide measured at Mauna Loa since 1958, and the global temperature record since 1880. Rebuilt every week from NOAA and NASA data.</p>
+      <p id="updated" class="muted"></p>
+    </header>
+
+    <main class="wrap">
+      <p id="error" class="error" role="alert" hidden></p>
+
+      <section aria-label="Headline figures">
+        <dl id="summary" class="summary"></dl>
+      </section>
+
+      <section class="panel" aria-labelledby="keeling-title">
+        <h2 id="keeling-title">CO₂ at Mauna Loa, by month</h2>
+        <p class="muted">The yearly wiggle is plants growing and decaying in the northern hemisphere. The smooth line removes it.</p>
+        <div id="chart-keeling" class="chart"></div>
+      </section>
+
+      <div class="grid-2">
+        <section class="panel" aria-labelledby="growth-title">
+          <h2 id="growth-title">How much CO₂ rose each year</h2>
+          <div id="chart-growth" class="chart"></div>
+        </section>
+        <section class="panel" aria-labelledby="season-title">
+          <h2 id="season-title">The yearly cycle</h2>
+          <p class="muted">Average distance from the trend by month, last ten years.</p>
+          <div id="chart-season" class="chart"></div>
+        </section>
+      </div>
+
+      <section class="panel" aria-labelledby="temperature-title">
+        <h2 id="temperature-title">Global temperature compared with 1951 to 1980</h2>
+        <p class="muted">Each bar is one year. The line is the average of the last ten years.</p>
+        <div id="chart-temperature" class="chart"></div>
+      </section>
+
+      <div class="grid-2">
+        <section class="panel" aria-labelledby="scatter-title">
+          <h2 id="scatter-title">CO₂ and temperature, year by year</h2>
+          <p id="correlation" class="muted"></p>
+          <div id="chart-scatter" class="chart"></div>
+        </section>
+        <section class="panel" aria-labelledby="decades-title">
+          <h2 id="decades-title">By decade</h2>
+          <div class="table-wrap"><table id="decades"></table></div>
+        </section>
+      </div>
+
+      <section class="panel" aria-labelledby="data-title">
+        <h2 id="data-title">Data and quality checks</h2>
+        <ul id="sources" class="sources"></ul>
+        <p>Download: <a href="data/co2_annual.csv">annual CO₂ (CSV)</a> · <a href="data/temperature_annual.csv">annual temperature (CSV)</a> · <a href="data/dashboard.json">everything (JSON)</a></p>
+        <details>
+          <summary>Checks run on this update</summary>
+          <ul id="checks"></ul>
+        </details>
+      </section>
+    </main>
+
+    <footer class="wrap muted">
+      Data: NOAA Global Monitoring Laboratory and NASA Goddard Institute for Space Studies, U.S. government works in the public domain. Built by an open-source pipeline; see the <a href="https://github.com/daen8584-spec/data-dashboard">code</a>.
+    </footer>
+
+    <script type="module" src="dashboard.js"></script>
+  </body>
+</html>
