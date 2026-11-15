@@ -148,4 +148,8 @@ def build_tables(co2: list[Co2Month], temperature: list[TemperatureMonth]) -> di
     }
     for name in ("co2_monthly", "co2_annual", "co2_seasonal", "temperature_annual", "decades"):
         tables[name] = _round(tables[name])
+    tables["summary"] = {
+        key: _round([value])[0] if isinstance(value, dict) else value
+        for key, value in tables["summary"].items()
+    }
     return tables

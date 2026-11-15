@@ -7,6 +7,8 @@ A data pipeline that downloads atmospheric CO₂ and global temperature data fro
 
 **See it:** [daen8584-spec.github.io/data-dashboard](https://daen8584-spec.github.io/data-dashboard/)
 
+![The dashboard: latest CO2 of 426.1 ppm, the Keeling curve since 1958, yearly CO2 growth, the seasonal cycle and global temperature since 1880](docs/dashboard.png)
+
 ## The data
 
 | Series | Source | Coverage |

@@ -59,3 +59,5 @@ def test_decades_and_summary(tables: dict) -> None:  # type: ignore[type-arg]
     assert summary["warmest_year"]["year"] >= 2015
     assert summary["correlation"]["r"] > 0.9
     assert summary["correlation"]["years"] == LAST_YEAR - 1959
+    # Published figures are rounded, not long binary fractions.
+    assert summary["co2_change"]["from_ppm"] == round(summary["co2_change"]["from_ppm"], 3)
