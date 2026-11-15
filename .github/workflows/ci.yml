@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy
+      - run: pytest
+
+  # Runs the pipeline against the real NOAA and NASA files, so a change in their formats
+  # shows up here, and keeps the built dashboard as an artifact to look at.
+  live-data:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: pip install -e .
+      - run: climate-pipeline --raw data/raw --out site/data
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dashboard
+          path: site
