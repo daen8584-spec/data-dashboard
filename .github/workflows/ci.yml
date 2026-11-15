@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy
+      - run: pytest
+
+  # Runs the pipeline against the real NOAA and NASA files, so a change in their formats
+  # shows up here, and keeps the built dashboard as an artifact to look at.
+  live-data:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: pip install -e .
+      - run: climate-pipeline --raw data/raw --out site/data
+      - name: Summarize the update
+        run: |
+          python - >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json
+          d = json.load(open("site/data/dashboard.json"))
+          s = d["summary"]
+          print("## Built from live data\n")
+          print(f"- Latest CO2: {s['latest_co2']['ppm']} ppm ({s['latest_co2']['year']}-{s['latest_co2']['month']:02d})")
+          print(f"- Warmest year: {s['warmest_year']['year']} ({s['warmest_year']['anomaly']:+.2f} C)")
+          for source in d["meta"]["sources"]:
+              print(f"- {source['title']}: {source['bytes']} bytes, sha256 {source['sha256'][:12]}")
+          PY
+          # The full output, for checking an update from the log.
+          cat site/data/dashboard.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dashboard
+          path: site

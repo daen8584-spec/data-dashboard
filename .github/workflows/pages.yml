@@ -1,0 +1,41 @@
+# Rebuilds the dashboard from fresh NOAA and NASA data and publishes it to GitHub Pages:
+# on every push to main, every Monday, and on demand. If the data fails validation, the
+# job stops before deploying, so the previous dashboard stays up, and GitHub emails the
+# repository owner about the failed run. Pages must be set to deploy from GitHub Actions.
+name: Update dashboard
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: pip install -e .
+      - name: Download, validate and transform
+        run: climate-pipeline --raw data/raw --out site/data
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4
